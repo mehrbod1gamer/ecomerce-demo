@@ -1,0 +1,1 @@
+https://github.com/sartoopjj/thefeed/releases/download/v0.13.3/thefeed-client-v0.13.3-linux-arm64
