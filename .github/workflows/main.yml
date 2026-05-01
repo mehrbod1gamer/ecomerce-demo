@@ -1,0 +1,42 @@
+name: Download Files from List
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  download-files:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download file(s)
+        run: |
+          LIST="urls.txt"
+          
+          if [ -f "$LIST" ]; then
+            while IFS= read -r url || [ -n "$url" ]; do
+              url=$(echo "$url" | xargs)
+              if [ -n "$url" ]; then
+                wget -q "$url"
+              fi
+            done < "$LIST"
+            echo -n "" > "$LIST"
+          else
+            echo "Error: $LIST not found!"
+            exit 1
+          fi
+
+      - name: Push downloaded file(s)
+        uses: EndBug/add-and-commit@v10
+        with:
+          add: "."
+          message: "Downloaded"
